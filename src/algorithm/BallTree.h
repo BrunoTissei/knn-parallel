@@ -9,14 +9,10 @@
 #include <algorithm>
 #include <functional>
 
-typedef struct point {
-  std::vector<double> x;
-  int index, mclass;
-} point;
+#include "core/data.h"
+#include "math/Metrics.h"
 
-typedef std::vector<point> matrix;
 typedef std::multiset<std::pair<double,int>> prio_queue;
-typedef std::function<double(const point&, const point&)> metric; 
 
 typedef struct node {
   int index;
@@ -33,26 +29,32 @@ class BallTree {
 
   int k;
   node *root;
+  matrix data;
   metric distance;
 
   public:
-    matrix data;
 
-    BallTree(matrix &points, metric distance);
+    BallTree(metric distance);
+
     ~BallTree();
 
-    node *build(matrix &points);
+    void build(matrix &points, int k);
 
-    void build(int k);
-    void partition(matrix &points, matrix &left, matrix &right, int left_ind);
-    void get_center(matrix &points, point &center);
     void search(point t, int k, matrix &ans);
+
+  private:
+
+    void search(node *n, point &t, prio_queue &pq, int k);
+
+    void clear(node *n);
+
+    void get_center(matrix &points, point &center);
+
+    void partition(matrix &points, matrix &left, matrix &right, int left_ind);
 
     std::pair<double,int> get_radius(point &center, matrix &points);
 
-  private:
-    void search(node *n, point &t, prio_queue &pq, int k);
-    void clear(node *n);
+    node *build(matrix &points);
 
 };
 

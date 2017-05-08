@@ -1,7 +1,6 @@
 #include "BallTree.h"
 
-BallTree::BallTree(matrix &points, metric distance) {
-  this->data = points;
+BallTree::BallTree(metric distance) {
   this->distance = distance;
 }
 
@@ -20,8 +19,9 @@ void BallTree::clear(node *n) {
   delete n;
 }
 
-void BallTree::build(int k) {
+void BallTree::build(matrix &points, int k) {
   this->k = k;
+  this->data = points;
   this->root = build(this->data);
 }
 
@@ -143,18 +143,6 @@ void BallTree::partition(matrix &points, matrix &left, matrix &right,
     }
   }
 }
-
-/*double BallTree::distance(const point &a, const point &b) {
-  assert(a.x.size() == b.x.size());
-  
-  double dist = 0.0;
-  for (int i = 0; i < (int) a.x.size(); ++i) {
-    //dist += ((a.x[i] - b.x[i]) * (a.x[i] - b.x[i]));
-    dist += fabs(a.x[i] - b.x[i]);
-  }
-
-  return (dist);
-}*/
 
 std::pair<double,int> BallTree::get_radius(point &center, matrix &points) {
   int index = 0;

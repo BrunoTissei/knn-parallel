@@ -4,7 +4,9 @@
 #include <cmath>
 #include <functional>
 
-#include "BallTree.h"
+#include "core/data.h"
+
+typedef std::function<double(const point&, const point&)> metric; 
 
 class Metrics {
 
