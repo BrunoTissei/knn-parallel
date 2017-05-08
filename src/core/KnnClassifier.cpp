@@ -8,7 +8,7 @@ KnnClassifier<T>::KnnClassifier(metric distance, int k) {
 
 template <class T>
 KnnClassifier<T>::~KnnClassifier() {
-
+  delete tree;
 }
 
 template <class T>
@@ -21,7 +21,7 @@ void KnnClassifier<T>::fit(matrix &points) {
 }
 
 template <class T>
-int KnnClassifier<T>::predict(point &point) {
+int KnnClassifier<T>::predict(const point &point) {
   matrix m;
   int result;
   int grt, pred;
@@ -44,5 +44,6 @@ int KnnClassifier<T>::predict(point &point) {
 
   return pred;
 }
+
 
 template class KnnClassifier<BallTree>;

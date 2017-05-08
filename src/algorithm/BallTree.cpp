@@ -34,6 +34,7 @@ node *BallTree::build(matrix &points) {
       n->points.push_back(points[i].index);
     }
 
+    n->radius = 0.0;
     n->leaf = true;
     n->left = nullptr;
     n->right = nullptr;
@@ -55,8 +56,7 @@ node *BallTree::build(matrix &points) {
   return n;
 }
 
-// TODO: return vector of mclasses instead of points
-void BallTree::search(point t, int k, matrix &ans) {
+void BallTree::search(const point &t, int k, matrix &ans) {
   prio_queue pq;
   search(root, t, pq, k);
   ans.clear();
@@ -66,7 +66,7 @@ void BallTree::search(point t, int k, matrix &ans) {
   }
 }
 
-void BallTree::search(node *n, point &t, prio_queue &pq, int k) {
+void BallTree::search(node *n, const point &t, prio_queue &pq, int k) {
   if (n == nullptr) {
     return;
   }
@@ -92,19 +92,19 @@ void BallTree::search(node *n, point &t, prio_queue &pq, int k) {
     double dist_right = distance(t, n->right->center);
 
     if (dist_left <= dist_right) {
-      if (cond || (dist_left <= pq.rbegin()->first + n->left->radius)) {
+      if (cond || (dist_left <= (pq.rbegin()->first + n->left->radius))) {
         search(n->left, t, pq, k);
       }
 
-      if (cond || (dist_right <= pq.rbegin()->first + n->right->radius)) {
+      if (cond || (dist_right <= (pq.rbegin()->first + n->right->radius))) {
         search(n->right, t, pq, k);
       }
     } else {
-      if (cond || (dist_right <= pq.rbegin()->first + n->right->radius)) {
+      if (cond || (dist_right <= (pq.rbegin()->first + n->right->radius))) {
         search(n->right, t, pq, k);
       }
 
-      if (cond || (dist_left <= pq.rbegin()->first + n->left->radius)) {
+      if (cond || (dist_left <= (pq.rbegin()->first + n->left->radius))) {
         search(n->left, t, pq, k);
       }
     }

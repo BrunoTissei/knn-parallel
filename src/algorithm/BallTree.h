@@ -40,11 +40,11 @@ class BallTree {
 
     void build(matrix &points, int k);
 
-    void search(point t, int k, matrix &ans);
+    void search(const point &t, int k, matrix &ans);
 
   private:
 
-    void search(node *n, point &t, prio_queue &pq, int k);
+    void search(node *n, const point &t, prio_queue &pq, int k);
 
     void clear(node *n);
 

@@ -23,6 +23,7 @@ class Metrics {
       };
     }
 
+    // Mean-Square Error
     static inline metric MSE() {
       return [](const point &a, const point &b) {
         double dist = 0.0;
