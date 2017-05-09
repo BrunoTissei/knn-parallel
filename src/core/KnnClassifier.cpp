@@ -25,6 +25,7 @@ int KnnClassifier<T>::predict(const point &point) {
   matrix m;
   int result;
   int grt, pred;
+
   std::vector<int> cnt(10,0);
 
   tree->search(point, k, m);

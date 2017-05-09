@@ -2,6 +2,7 @@
 #define _KNN_CLASSIFIER_H
 
 #include <omp.h>
+#include <vector>
 
 #include "algorithm/BallTree.h"
 #include "core/data.h"

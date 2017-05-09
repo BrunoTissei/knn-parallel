@@ -1,4 +1,4 @@
-#include "BallTree.h"
+#include "algorithm/BallTree.h"
 
 BallTree::BallTree(metric distance) {
   this->distance = distance;
@@ -36,16 +36,18 @@ node *BallTree::build(matrix &points) {
 
     n->radius = 0.0;
     n->leaf = true;
+
     n->left = nullptr;
     n->right = nullptr;
   } else {
     auto result = get_radius(n->center, points);
-    n->radius = result.first;
 
     matrix l_partition, r_partition;
     partition(points, l_partition, r_partition, result.second);
 
+    n->radius = result.first;
     n->leaf = false;
+
     #pragma omp task
     n->left = build(l_partition);
     #pragma omp task
@@ -72,14 +74,14 @@ void BallTree::search(node *n, const point &t, prio_queue &pq, int k) {
   }
 
   auto top = [&](void) {
-    return data[pq.rbegin()->second];
+    return pq.rbegin();
   };
 
   if (n->leaf) {
     for (int i = 0; i < (int) n->points.size(); ++i) {
       double dist = distance(t, data[n->points[i]]);
 
-      if (pq.size() == 0 || dist < distance(t, top())) {
+      if (pq.size() == 0 || dist < distance(t, data[top()->second])) {
         pq.insert(std::make_pair(dist, n->points[i]));
         if ((int) pq.size() > k) {
           pq.erase(std::prev(pq.end()));
@@ -87,24 +89,24 @@ void BallTree::search(node *n, const point &t, prio_queue &pq, int k) {
       }
     }
   } else {
-    bool cond = (pq.size() == 0) || n->leaf;
+    bool cond = (pq.size() == 0);
     double dist_left = distance(t, n->left->center);
     double dist_right = distance(t, n->right->center);
 
     if (dist_left <= dist_right) {
-      if (cond || (dist_left <= (pq.rbegin()->first + n->left->radius))) {
+      if (cond || (dist_left <= (top()->first + n->left->radius))) {
         search(n->left, t, pq, k);
       }
 
-      if (cond || (dist_right <= (pq.rbegin()->first + n->right->radius))) {
+      if (cond || (dist_right <= (top()->first + n->right->radius))) {
         search(n->right, t, pq, k);
       }
     } else {
-      if (cond || (dist_right <= (pq.rbegin()->first + n->right->radius))) {
+      if (cond || (dist_right <= (top()->first + n->right->radius))) {
         search(n->right, t, pq, k);
       }
 
-      if (cond || (dist_left <= (pq.rbegin()->first + n->left->radius))) {
+      if (cond || (dist_left <= (top()->first + n->left->radius))) {
         search(n->left, t, pq, k);
       }
     }

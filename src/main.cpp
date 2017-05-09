@@ -6,8 +6,8 @@
 #include <chrono>
 #include <ctime>
 
-#include "core/KnnClassifier.h"
 #include "math/Metrics.h"
+#include "core/KnnClassifier.h"
 #include "algorithm/BallTree.h"
 
 using namespace std;
@@ -31,11 +31,10 @@ struct timer {
 
 #define TIMER(pbn) timer measure(pbn)
 
-void input(matrix &tr_set, matrix &ts_set, char **argv);
+bool input(matrix &tr_set, matrix &ts_set, int &k, int argc, char **argv);
 
 int main(int argc, char **argv) {
-  int k = atoi(argv[3]);
-  int curr = 0;
+  int k, curr = 0;
 
   double corr = 0.0;
   double training_time, testing_time;
@@ -43,10 +42,11 @@ int main(int argc, char **argv) {
   matrix tr_set, ts_set;
 
   memset(confusion, 0, sizeof(confusion));
-  input(tr_set, ts_set, argv);
+  if (!input(tr_set, ts_set, k, argc, argv)) {
+    return 1;
+  }
 
   const int n_iter = ts_set.size();
-
 
   {
     KnnClassifier<BallTree> KnnClf(Metrics::SSD(), k);
@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
     printf("Training...\n");
     {
       TIMER(&training_time);
+
       KnnClf.fit(tr_set);
     }
     printf("Done\n\n");
@@ -61,6 +62,7 @@ int main(int argc, char **argv) {
     printf("Testing...\n");
     {
       TIMER(&testing_time);
+
       #pragma omp parallel for reduction (+:corr) shared(KnnClf, ts_set, k, curr)
       for (int i = 0; i < n_iter; ++i) {
         int pred = KnnClf.predict(ts_set[i]);
@@ -80,7 +82,6 @@ int main(int argc, char **argv) {
     printf("Done\n\n");
   }
 
-
   printf("Training time: %lf ms\n", training_time);
   printf("Testing time: %lf ms\n", testing_time);
 
@@ -98,15 +99,32 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-void input(matrix &tr_set, matrix &ts_set, char **argv) {
+bool input(matrix &tr_set, matrix &ts_set, int &k, int argc, char **argv) {
   double x;
   int n_tr, k_tr;
   int n_ts, k_ts;
 
+  if (argc < 4) {
+    printf("Usage:\n");
+    printf("\tknn <training data> <testing data> k\n");
+    return false;
+  }
+
   FILE *training_f = fopen(argv[1], "r");
   FILE *testing_f = fopen(argv[2], "r");
 
-  // TODO: Add verification of the input files
+  if (training_f == NULL) {
+    printf("ERROR:\n");
+    printf("\tFile %s does not exist!\n", argv[1]);
+    return false;
+  }
+
+  if (testing_f == NULL) {
+    printf("ERROR:\n");
+    printf("\tFile %s does not exist!\n", argv[2]);
+    return false;
+  }
+
   fscanf(training_f, "%d %d", &n_tr, &k_tr);
   tr_set.resize(n_tr);
 
@@ -132,4 +150,8 @@ void input(matrix &tr_set, matrix &ts_set, char **argv) {
     ts_set[i].index = i;
     fscanf(testing_f, "%d", &ts_set[i].mclass);
   }
+
+  k = atoi(argv[3]);
+
+  return true;
 }
