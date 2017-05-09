@@ -6,9 +6,9 @@
 #include <chrono>
 #include <ctime>
 
-#include "math/Metrics.h"
-#include "core/KnnClassifier.h"
-#include "algorithm/BallTree.h"
+#include "math/metrics.h"
+#include "core/knn_classifier.h"
+#include "algorithm/ball_tree.h"
 
 using namespace std;
 

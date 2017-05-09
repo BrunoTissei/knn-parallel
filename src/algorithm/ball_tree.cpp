@@ -1,4 +1,4 @@
-#include "algorithm/BallTree.h"
+#include "algorithm/ball_tree.h"
 
 BallTree::BallTree(metric distance) {
   this->distance = distance;

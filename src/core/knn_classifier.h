@@ -4,9 +4,9 @@
 #include <omp.h>
 #include <vector>
 
-#include "algorithm/BallTree.h"
+#include "algorithm/ball_tree.h"
 #include "core/data.h"
-#include "math/Metrics.h"
+#include "math/metrics.h"
 
 template <class T>
 class KnnClassifier {

@@ -10,7 +10,7 @@
 #include <functional>
 
 #include "core/data.h"
-#include "math/Metrics.h"
+#include "math/metrics.h"
 
 typedef std::multiset<std::pair<double,int>> prio_queue;
 

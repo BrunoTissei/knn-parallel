@@ -1,4 +1,4 @@
-#include "core/KnnClassifier.h"
+#include "core/knn_classifier.h"
 
 template <class T>
 KnnClassifier<T>::KnnClassifier(metric distance, int k) {
