@@ -65,10 +65,10 @@ int main(int argc, char **argv) {
 
       #pragma omp parallel for reduction (+:corr) shared(KnnClf, ts_set, k, curr)
       for (int i = 0; i < n_iter; ++i) {
-        int pred = KnnClf.predict(ts_set[i]);
+        int pred = KnnClf.predict(*ts_set[i]);
 
-        confusion[pred][ts_set[i].mclass]++;
-        if (pred == ts_set[i].mclass)
+        confusion[pred][ts_set[i]->mclass]++;
+        if (pred == ts_set[i]->mclass)
           corr++;
 
         printf("%d/%d\r", curr, n_iter);
@@ -95,6 +95,11 @@ int main(int argc, char **argv) {
 
     printf("\n");
   }
+
+  for (auto i : tr_set)
+    delete i;
+  for (auto i : ts_set)
+    delete i;
 
   return 0;
 }
@@ -129,26 +134,30 @@ bool input(matrix &tr_set, matrix &ts_set, int &k, int argc, char **argv) {
   tr_set.resize(n_tr);
 
   for (int i = 0; i < n_tr; ++i) {
+    tr_set[i] = new point;
+
     for (int j = 0; j < k_tr; ++j) {
       fscanf(training_f, "%lf", &x);
-      tr_set[i].x.push_back(x);
+      tr_set[i]->x.push_back(x);
     }
 
-    tr_set[i].index = i;
-    fscanf(training_f, "%d", &tr_set[i].mclass);
+    tr_set[i]->index = i;
+    fscanf(training_f, "%d", &tr_set[i]->mclass);
   }
 
   fscanf(testing_f, "%d %d", &n_ts, &k_ts);
   ts_set.resize(n_ts);
 
   for (int i = 0; i < n_ts; ++i) {
+    ts_set[i] = new point;
+
     for (int j = 0; j < k_ts; ++j) {
       fscanf(testing_f, "%lf", &x);
-      ts_set[i].x.push_back(x);
+      ts_set[i]->x.push_back(x);
     }
 
-    ts_set[i].index = i;
-    fscanf(testing_f, "%d", &ts_set[i].mclass);
+    ts_set[i]->index = i;
+    fscanf(testing_f, "%d", &ts_set[i]->mclass);
   }
 
   k = atoi(argv[3]);

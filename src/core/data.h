@@ -8,6 +8,6 @@ typedef struct point {
   int index, mclass;
 } point;
 
-typedef std::vector<point> matrix;
+typedef std::vector<point *> matrix;
 
 #endif

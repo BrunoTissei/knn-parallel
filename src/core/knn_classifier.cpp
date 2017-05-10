@@ -31,7 +31,7 @@ int KnnClassifier<T>::predict(const point &point) {
   tree->search(point, k, m);
 
   for (int j = 0; j < (int) m.size(); ++j) {
-    result = m[j].mclass;
+    result = m[j]->mclass;
     cnt[result]++; 
   }
 
