@@ -5,7 +5,7 @@ BallTree::BallTree(metric distance) {
 }
 
 BallTree::~BallTree() {
-  data.clear();
+  data->clear();
   clear(root);
 }
 
@@ -19,20 +19,22 @@ void BallTree::clear(node *n) {
   delete n;
 }
 
-void BallTree::build(matrix &points, int k) {
+void BallTree::build(matrix *points, int k) {
   this->k = k;
   this->data = points;
-  this->root = build(this->data);
+  this->root = build(points);
 }
 
-node *BallTree::build(matrix &points) {
-  node *n = new node;
-  get_center(points, n->center);
+node *BallTree::build(matrix *points) {
+  if ((*points).size() == 0) {
+    return nullptr;
+  }
 
-  if ((int) points.size() <= this->k) {
-    for (int i = 0; i < (int) points.size(); ++i) {
-      n->points.push_back(points[i]->index);
-    }
+  node *n = new node;
+  n->center = get_center(points);
+
+  if ((int) points->size() <= this->k) {
+    n->points = points;
 
     n->radius = 0.0;
     n->leaf = true;
@@ -42,7 +44,8 @@ node *BallTree::build(matrix &points) {
   } else {
     auto result = get_radius(n->center, points);
 
-    matrix l_partition, r_partition;
+    matrix *l_partition = new matrix;
+    matrix *r_partition = new matrix;
     partition(points, l_partition, r_partition, result.second);
 
     n->radius = result.first;
@@ -60,15 +63,15 @@ node *BallTree::build(matrix &points) {
 
 void BallTree::search(const point &t, int k, matrix &ans) {
   prio_queue pq;
-  search(root, t, pq, k);
+  search(root, &t, pq, k);
   ans.clear();
 
   for (auto i : pq) {
-    ans.push_back(data[i.second]);
+    ans.push_back((*data)[i.second]);
   }
 }
 
-void BallTree::search(node *n, const point &t, prio_queue &pq, int k) {
+void BallTree::search(node *n, const point *t, prio_queue &pq, int k) {
   if (n == nullptr) {
     return;
   }
@@ -78,11 +81,11 @@ void BallTree::search(node *n, const point &t, prio_queue &pq, int k) {
   };
 
   if (n->leaf) {
-    for (int i = 0; i < (int) n->points.size(); ++i) {
-      double dist = distance(t, *data[n->points[i]]);
+    for (int i = 0; i < (int) n->points->size(); ++i) {
+      double dist = distance(t, n->points[0][i]);
 
-      if (pq.size() == 0 || dist < distance(t, *data[top()->second])) {
-        pq.insert(std::make_pair(dist, n->points[i]));
+      if (pq.size() == 0 || dist < distance(t, (*data)[top()->second])) {
+        pq.insert(std::make_pair(dist, n->points[0][i]->index));
         if ((int) pq.size() > k) {
           pq.erase(std::prev(pq.end()));
         }
@@ -113,7 +116,7 @@ void BallTree::search(node *n, const point &t, prio_queue &pq, int k) {
   }
 }
 
-void BallTree::partition(matrix &points, matrix &left, matrix &right, 
+void BallTree::partition(matrix *points, matrix *left, matrix *right, 
     int left_ind) {
 
   int right_ind = 0;
@@ -121,10 +124,10 @@ void BallTree::partition(matrix &points, matrix &left, matrix &right,
   double left_dist, right_dist;
 
   point *rm_point;
-  point *lm_point = points[left_ind];
+  point *lm_point = points[0][left_ind];
 
-  for (int i = 0; i < (int) points.size(); ++i) {
-    dist = distance(*lm_point, *points[i]);
+  for (int i = 0; i < (int) points->size(); ++i) {
+    dist = distance(lm_point, points[0][i]);
 
     if (dist > grt_dist) {
       grt_dist = dist;
@@ -132,26 +135,26 @@ void BallTree::partition(matrix &points, matrix &left, matrix &right,
     }
   }
 
-  rm_point = points[right_ind];
+  rm_point = points[0][right_ind];
 
-  for (int i = 0; i < (int) points.size(); ++i) {
-    left_dist = distance(*points[i], *lm_point);
-    right_dist = distance(*points[i], *rm_point);
+  for (int i = 0; i < (int) points->size(); ++i) {
+    left_dist = distance(points[0][i], lm_point);
+    right_dist = distance(points[0][i], rm_point);
 
     if (left_dist < right_dist) {
-      left.push_back(points[i]);
+      left->push_back(points[0][i]);
     } else {
-      right.push_back(points[i]);
+      right->push_back(points[0][i]);
     }
   }
 }
 
-std::pair<double,int> BallTree::get_radius(point &center, matrix &points) {
+std::pair<double,int> BallTree::get_radius(point *center, const matrix *points) {
   int index = 0;
   double dist, radius = 0.0;
 
-  for (int i = 0; i < (int) points.size(); ++i) {
-    dist = distance(center, *points[i]);
+  for (int i = 0; i < (int) points->size(); ++i) {
+    dist = distance(center, points[0][i]);
 
     if (radius < dist) {
       radius = dist;
@@ -162,18 +165,21 @@ std::pair<double,int> BallTree::get_radius(point &center, matrix &points) {
   return std::make_pair(radius, index);
 }
 
-void BallTree::get_center(matrix &points, point &center) {
-  center.x.resize(points[0]->x.size());
+point *BallTree::get_center(const matrix *points) {
+  point *center = new point;
+  center->x.resize(points[0][0]->x.size());
 
-  for (auto p : points) {
+  for (auto p : *points) {
     int i = 0;
     for (double dim : p->x) {
-      center.x[i++] += dim;
+      center->x[i++] += dim;
     }
   }
 
-  double div = 1.0 / ((double) points.size());
-  for (int i = 0; i < (int) points[0]->x.size(); ++i) {
-    center.x[i] *= div;
+  double div = 1.0 / ((double) points[0].size());
+  for (int i = 0; i < (int) points[0][0]->x.size(); ++i) {
+    center->x[i] *= div;
   }
+
+  return center;
 }

@@ -19,8 +19,8 @@ typedef struct node {
   bool leaf;
   double radius;
 
-  point center;
-  std::vector<int> points;
+  point *center;
+  matrix *points;
 
   node *left, *right;
 } node;
@@ -29,7 +29,7 @@ class BallTree {
 
   int k;
   node *root;
-  matrix data;
+  matrix *data;
   metric distance;
 
   public:
@@ -38,23 +38,23 @@ class BallTree {
 
     ~BallTree();
 
-    void build(matrix &points, int k);
+    void build(matrix *points, int k);
 
     void search(const point &t, int k, matrix &ans);
 
   private:
 
-    void search(node *n, const point &t, prio_queue &pq, int k);
+    void search(node *n, const point *t, prio_queue &pq, int k);
 
     void clear(node *n);
 
-    void get_center(matrix &points, point &center);
+    point *get_center(const matrix *points);
 
-    void partition(matrix &points, matrix &left, matrix &right, int left_ind);
+    void partition(matrix *points, matrix *left, matrix *right, int left_ind);
 
-    std::pair<double,int> get_radius(point &center, matrix &points);
+    std::pair<double,int> get_radius(point *center, const matrix *points);
 
-    node *build(matrix &points);
+    node *build(matrix *points);
 
 };
 
