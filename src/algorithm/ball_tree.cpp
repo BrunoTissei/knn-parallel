@@ -166,18 +166,16 @@ std::pair<double,int> BallTree::get_radius(point *center, const matrix *points) 
 }
 
 point *BallTree::get_center(const matrix *points) {
-  point *center = new point;
-  center->x.resize(points[0][0]->x.size());
+  point *center = create_point(points[0][0]->size);
 
   for (auto p : *points) {
-    int i = 0;
-    for (double dim : p->x) {
-      center->x[i++] += dim;
+    for (int i = 0; i < p->size; ++i) {
+      center->x[i] += p->x[i];
     }
   }
 
-  double div = 1.0 / ((double) points[0].size());
-  for (int i = 0; i < (int) points[0][0]->x.size(); ++i) {
+  double div = 1.0 / ((double) points->size());
+  for (int i = 0; i < (int) points[0][0]->size; ++i) {
     center->x[i] *= div;
   }
 

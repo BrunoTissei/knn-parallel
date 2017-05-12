@@ -15,7 +15,7 @@ class Metrics {
     static inline metric euclidean() {
       return [](const point *a, const point *b) {
         double dist = 0.0;
-        for (int i = 0; i < (int) a->x.size(); ++i) {
+        for (int i = 0; i < (int) a->size; ++i) {
           dist += ((a->x[i] - b->x[i]) * (a->x[i] - b->x[i]));
         }
 
@@ -27,11 +27,11 @@ class Metrics {
     static inline metric MSE() {
       return [](const point *a, const point *b) {
         double dist = 0.0;
-        for (int i = 0; i < (int) a->x.size(); ++i) {
+        for (int i = 0; i < (int) a->size; ++i) {
           dist += ((a->x[i] - b->x[i]) * (a->x[i] - b->x[i]));
         }
 
-        return (dist) / a->x.size();
+        return (dist) / a->size;
       };
     }
 
@@ -39,7 +39,7 @@ class Metrics {
     static inline metric SSD() {
       return [](const point *a, const point *b) {
         double dist = 0.0;
-        for (int i = 0; i < (int) a->x.size(); ++i) {
+        for (int i = 0; i < (int) a->size; ++i) {
           dist += ((a->x[i] - b->x[i]) * (a->x[i] - b->x[i]));
         }
 
@@ -51,7 +51,7 @@ class Metrics {
     static inline metric SAD() {
       return [](const point *a, const point *b) {
         double dist = 0.0;
-        for (int i = 0; i < (int) a->x.size(); ++i) {
+        for (int i = 0; i < (int) a->size; ++i) {
           dist += fabs(a->x[i] - b->x[i]);
         }
 
