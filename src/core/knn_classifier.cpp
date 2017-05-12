@@ -16,7 +16,7 @@ void KnnClassifier<T>::fit(matrix &points) {
   #pragma omp parallel shared(tree,points)
   {
     #pragma omp single
-    tree->build(&points, this->k);
+    tree->build(points, this->k);
   }
 }
 
@@ -26,7 +26,7 @@ int KnnClassifier<T>::predict(const point &point) {
   int result;
   int grt, pred;
 
-  std::vector<int> cnt(50,0);
+  std::vector<int> cnt(10,0);
 
   tree->search(point, k, m);
 
