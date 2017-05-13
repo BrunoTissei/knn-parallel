@@ -134,7 +134,8 @@ bool input(matrix &tr_set, matrix &ts_set, int &k, int argc, char **argv) {
   tr_set.resize(n_tr);
 
   for (int i = 0; i < n_tr; ++i) {
-    tr_set[i] = create_point(k_tr);
+    tr_set[i] = new point;
+    tr_set[i]->x.resize(k_tr);
 
     for (int j = 0; j < k_tr; ++j) {
       fscanf(training_f, "%lf", &x);
@@ -149,7 +150,8 @@ bool input(matrix &tr_set, matrix &ts_set, int &k, int argc, char **argv) {
   ts_set.resize(n_ts);
 
   for (int i = 0; i < n_ts; ++i) {
-    ts_set[i] = create_point(k_ts);
+    ts_set[i] = new point;
+    ts_set[i]->x.resize(k_ts);
 
     for (int j = 0; j < k_ts; ++j) {
       fscanf(testing_f, "%lf", &x);
