@@ -22,7 +22,7 @@ void KnnClassifier<T>::fit(matrix &points) {
 
 template <class T>
 int KnnClassifier<T>::predict(const point &point) {
-  int result
+  int result;
   int grt, pred;
   matrix m;
 
