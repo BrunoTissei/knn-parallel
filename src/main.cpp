@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
   {
     KnnClassifier<BallTree> KnnClf(Metrics::SSD(), k);
 
-    printf("Training...\n");
+    printf("Building Tree...\n");
     {
       TIMER(&training_time);
 
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     printf("Done\n\n");
   }
 
-  printf("Training time: %lf ms\n", training_time);
+  printf("Building time: %lf ms\n", training_time);
   printf("Testing time: %lf ms\n", testing_time);
 
   printf("Accuracy: %lf\n\n", corr / n_iter);
