@@ -22,7 +22,7 @@ class KnnClassifier {
 
     void fit(matrix &points);
 
-    int predict(const point &point);
+    int predict(const point &point, int nclass);
 
 };
 

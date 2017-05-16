@@ -21,13 +21,12 @@ void KnnClassifier<T>::fit(matrix &points) {
 }
 
 template <class T>
-int KnnClassifier<T>::predict(const point &point) {
+int KnnClassifier<T>::predict(const point &point, int nclass) {
   int result;
   int grt, pred;
   matrix m;
 
-  // TODO: receive amount of classes as parameter
-  std::vector<int> cnt(50,0);
+  std::vector<int> cnt(nclass, 0);
   tree->search(point, k, m);
 
   for (int j = 0; j < (int) m.size(); ++j) {
