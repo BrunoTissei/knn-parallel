@@ -13,7 +13,7 @@ KnnClassifier<T>::~KnnClassifier() {
 
 template <class T>
 void KnnClassifier<T>::fit(matrix &points) {
-  #pragma omp parallel shared(tree,points)
+  #pragma omp parallel shared(tree, points)
   {
     #pragma omp single
     tree->build(points, this->k);

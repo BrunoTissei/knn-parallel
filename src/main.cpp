@@ -10,8 +10,6 @@
 #include "core/knn_classifier.h"
 #include "algorithm/ball_tree.h"
 
-//int confusion[100][100];
-
 struct timer {
   double *var;
   std::chrono::time_point<std::chrono::system_clock> start;
@@ -150,6 +148,10 @@ bool input(matrix &tr_set, matrix &ts_set, int &k, int &nclass,
 
   read_file(training_f, tr_set);
   read_file(testing_f, ts_set);
+
+  fclose(training_f);
+  fclose(testing_f);
+
   nclass++;
 
   return true;
