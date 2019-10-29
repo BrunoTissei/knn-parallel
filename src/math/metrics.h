@@ -6,8 +6,7 @@
 
 #include "core/data.h"
 
-
-typedef std::function<double(const point&, const point&)> metric; 
+using metric = std::function<double(const point&, const point&)>; 
 
 class Metrics {
 

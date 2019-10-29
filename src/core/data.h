@@ -9,6 +9,6 @@ struct point {
   int size;
 };
 
-typedef std::vector<point *> matrix;
+using vec_points = std::vector<point *>;
 
 #endif
