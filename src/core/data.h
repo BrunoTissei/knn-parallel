@@ -3,11 +3,11 @@
 
 #include <vector>
 
-typedef struct point {
+struct point {
   std::vector<double> x;
   int index, mclass;
   int size;
-} point;
+};
 
 typedef std::vector<point *> matrix;
 
