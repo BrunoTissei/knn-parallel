@@ -1,5 +1,6 @@
 #include "algorithm/ball_tree.h"
 
+// Constructor assigns metric function.
 BallTree::BallTree(metric distance) {
   this->distance = distance;
 }
@@ -9,6 +10,7 @@ BallTree::~BallTree() {
   clear(root);
 }
 
+// Destroys tree recursively.
 void BallTree::clear(node *n) {
   if (n == nullptr)
     return;
@@ -18,13 +20,15 @@ void BallTree::clear(node *n) {
   delete n;
 }
 
-void BallTree::build(matrix &points, int k) {
+// Builds ball-tree from points.
+void BallTree::build(vec_points &points, int k) {
   this->k = k;
   this->data = points;
   this->root = build(this->data);
 }
 
-node *BallTree::build(matrix &points) {
+// Builds tree recursively.
+node *BallTree::build(vec_points &points) {
   node *n = new node;
   get_center(points, n->center);
 
@@ -40,7 +44,7 @@ node *BallTree::build(matrix &points) {
   } else {
     auto result = get_radius(n->center, points);
 
-    matrix l_partition, r_partition;
+    vec_points l_partition, r_partition;
     partition(points, l_partition, r_partition, result.second);
 
     n->radius = result.first;
@@ -56,7 +60,8 @@ node *BallTree::build(matrix &points) {
   return n;
 }
 
-void BallTree::search(const point &t, int k, matrix &ans) {
+// Searches for k nearest neighbors of point t.
+void BallTree::search(const point &t, int k, vec_points &ans) {
   prio_queue pq;
   search(root, t, pq, k);
   ans.clear();
@@ -65,6 +70,7 @@ void BallTree::search(const point &t, int k, matrix &ans) {
     ans.push_back(data[i.second]);
 }
 
+// Searches recursively.
 void BallTree::search(node *n, const point &t, prio_queue &pq, int k) {
   if (n == nullptr)
     return;
@@ -104,9 +110,11 @@ void BallTree::search(node *n, const point &t, prio_queue &pq, int k) {
   }
 }
 
-void BallTree::partition(matrix &points, matrix &left, matrix &right, 
-    int left_ind) {
-
+// Creates partitions (left and right from center) of points.
+void BallTree::partition(vec_points &points, 
+    vec_points &left, vec_points &right, 
+    int left_ind) 
+{
   int right_ind = 0;
   double dist, grt_dist = 0.0;
   double left_dist, right_dist;
@@ -136,7 +144,10 @@ void BallTree::partition(matrix &points, matrix &left, matrix &right,
   }
 }
 
-std::pair<double,int> BallTree::get_radius(point &center, matrix &points) {
+// Returns radius of sphere.
+std::pair<double,int> BallTree::get_radius(point &center, 
+    vec_points &points) 
+{
   int index = 0;
   double dist, radius = 0.0;
 
@@ -152,7 +163,8 @@ std::pair<double,int> BallTree::get_radius(point &center, matrix &points) {
   return std::make_pair(radius, index);
 }
 
-void BallTree::get_center(matrix &points, point &center) {
+// Returns approximate center of set of points.
+void BallTree::get_center(vec_points &points, point &center) {
   center.x.resize(points[0]->x.size());
 
   for (auto p : points) {

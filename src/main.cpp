@@ -27,7 +27,9 @@ struct timer {
 
 #define TIMER(pbn) timer measure(pbn)
 
-bool input(matrix &tr_set, matrix &ts_set, int &k, int &nclass, 
+bool input(vec_points &tr_set, 
+    vec_points &ts_set, 
+    int &k, int &nclass, 
     int argc, char **argv);
 
 int main(int argc, char **argv) {
@@ -37,7 +39,7 @@ int main(int argc, char **argv) {
   double corr = 0.0;
   double training_time, testing_time;
 
-  matrix tr_set, ts_set;
+  vec_points tr_set, ts_set;
 
   if (!input(tr_set, ts_set, k, nclass, argc, argv))
     return 1;
@@ -100,9 +102,10 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-bool input(matrix &tr_set, matrix &ts_set, int &k, int &nclass, 
-    int argc, char **argv) {
-
+bool input(vec_points &tr_set, vec_points &ts_set, 
+    int &k, int &nclass, 
+    int argc, char **argv) 
+{
   if (argc < 4) {
     printf("Usage:\n");
     printf("\tknn <training data> <testing data> k\n");
@@ -125,7 +128,7 @@ bool input(matrix &tr_set, matrix &ts_set, int &k, int &nclass,
     return false;
   }
 
-  auto read_file = [&nclass](FILE *f, matrix &s) {
+  auto read_file = [&nclass](FILE *f, vec_points &s) {
     int n, d;
 
     fscanf(f, "%d %d", &n, &d);
