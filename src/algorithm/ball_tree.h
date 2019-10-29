@@ -1,5 +1,4 @@
-#ifndef _BALL_TREE_H
-#define _BALL_TREE_H
+#pragma once
 
 #include <set>
 #include <omp.h>
@@ -14,7 +13,7 @@
 
 typedef std::multiset<std::pair<double,int>> prio_queue;
 
-typedef struct node {
+struct node {
   int index;
   bool leaf;
   double radius;
@@ -23,7 +22,7 @@ typedef struct node {
   std::vector<int> points;
 
   node *left, *right;
-} node;
+};
 
 class BallTree {
 
@@ -33,7 +32,6 @@ class BallTree {
   metric distance;
 
   public:
-
     BallTree(metric distance);
 
     ~BallTree();
@@ -43,7 +41,6 @@ class BallTree {
     void search(const point &t, int k, matrix &ans);
 
   private:
-
     void search(node *n, const point &t, prio_queue &pq, int k);
 
     void clear(node *n);
@@ -55,7 +52,4 @@ class BallTree {
     std::pair<double,int> get_radius(point &center, matrix &points);
 
     node *build(matrix &points);
-
 };
-
-#endif

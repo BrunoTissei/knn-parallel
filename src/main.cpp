@@ -45,7 +45,6 @@ int main(int argc, char **argv) {
   const int n_iter = ts_set.size();
   std::vector<std::vector<int>> confusion(nclass, std::vector<int>(nclass, 0));
 
-
   {
     KnnClassifier<BallTree> clf(Metrics::SSD(), k);
 
@@ -79,7 +78,6 @@ int main(int argc, char **argv) {
     printf("%d/%d\n", n_iter, n_iter);
     printf("Done\n\n");
   }
-
 
   printf("Building time: %lf ms\n", training_time);
   printf("Testing time: %lf ms\n", testing_time);

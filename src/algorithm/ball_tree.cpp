@@ -29,8 +29,8 @@ node *BallTree::build(matrix &points) {
   get_center(points, n->center);
 
   if ((int) points.size() <= this->k) {
-    for (int i = 0; i < (int) points.size(); ++i)
-      n->points.push_back(points[i]->index);
+    for (auto i : points)
+      n->points.push_back(i->index);
 
     n->radius = 0.0;
     n->leaf = true;
